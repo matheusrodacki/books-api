@@ -134,3 +134,7 @@ replit*
 .replit
 replit.nix
 .breakpoints
+
+
+#mongoose
+/src/config/dbConnect.js

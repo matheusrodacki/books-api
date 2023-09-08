@@ -1,4 +1,15 @@
 import express from "express";
+import connectDB from "./config/dbConnect.js";
+
+const conection = await connectDB();
+
+conection.on("error", (erro) => {
+  console.error("DB Connection error!", erro);
+});
+
+conection.once("open", () => {
+  console.log("Connection with DB it's Open...")
+});
 
 const app = express();
 app.use(express.json());
@@ -39,7 +50,6 @@ function buscalivro(id) {
 }
 
 app.post("/livros", (req, res) => {
-
   const livro = req.body;
 
   const index = buscalivro(livro.id);
@@ -50,8 +60,6 @@ app.post("/livros", (req, res) => {
     livros.push(req.body);
     res.status(200).send("Livro cadastrado com sucesso!");
   }
-
-  
 });
 
 app.put("/livros/:id", (req, res) => {
