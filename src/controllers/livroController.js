@@ -23,15 +23,25 @@ class LivroController {
     const novoLivro = req.body;
     try {
       const autorEncontrado = await autor.findById(novoLivro.autor);
-      const livroCompleto = {
-        ...novoLivro,
-        autor: { ...autorEncontrado._doc },
-      };
-      const livroCriado = await livro.create(livroCompleto);
 
-      res
-        .status(201)
-        .json({ message: "Livro criado com sucesso!", livro: livroCriado });
+      if(autorEncontrado !== null ){
+
+        const livroCompleto = {
+          ...novoLivro,
+          autor: { ...autorEncontrado._doc },
+        };
+        const livroCriado = await livro.create(livroCompleto);
+  
+        res
+          .status(201)
+          .json({ message: "Livro criado com sucesso!", livro: livroCriado });
+
+
+      }else{
+        throw "autorNaoEncontrado";
+      }
+
+      
     } catch (erro) {
       next(erro);
     }

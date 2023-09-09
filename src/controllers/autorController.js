@@ -18,7 +18,7 @@ class AutorController {
       if (autorEncontrado !== null) {
         res.status(200).json(autorEncontrado);
       } else {
-        res.status(404).json({ message: "Autor não localizado!" });
+        throw "autorNaoEncontrado";
       }
     } catch (erro) {
       next(erro);
@@ -28,7 +28,7 @@ class AutorController {
   static async cadastrarAutor(req, res, next) {
     try {
       const novoAutor = await autor.create(req.body);
-      res.status(201).json({ message: "Criado com sucesso", autor: novoAutor });
+      res.status(201).json({ message: "Criado com sucesso ;)", autor: novoAutor });
     } catch (erro) {
       next(erro);
     }
@@ -38,7 +38,7 @@ class AutorController {
     try {
       const id = req.params.id;
       await autor.findByIdAndUpdate(id, req.body);
-      res.status(200).json({ message: "Autor atualizado" });
+      res.status(200).json({ message: "Autor atualizado!" });
     } catch (erro) {
       next(erro);
     }
