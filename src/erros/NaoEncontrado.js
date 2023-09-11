@@ -1,13 +1,9 @@
-import RequisicaoIncorreta from "./RequisicaoIncorreta.js";
+import ErroBase  from "./ErroBase.js";
 
-class ErroValidacao extends RequisicaoIncorreta {
-  constructor(erro) {
-    const mensagensErro = Object.values(erro.errors)
-      .map(erro => erro.message)
-      .join("; ");
-
-    super(`Os seguintes erros foram encontrados: ${mensagensErro}`);
+class NaoEncontrado extends ErroBase {
+  constructor(menssagem = "Página não encontrada!") {
+    super(menssagem, 404);
   }
 }
 
-export default ErroValidacao;
+export default NaoEncontrado;
