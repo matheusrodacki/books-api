@@ -75,13 +75,13 @@ class LivroController {
   }
   static async listaLivrosPorFiltro(req, res, next) {
     try {
-      const busca = processaBusca(req.query);
+      const busca = await processaBusca(req.query);
 
       const livrosBuscados = await livro.find(busca);
-      if (livrosBuscados.length > 0) {
+      if (livrosBuscados.length > 0 && busca !== null) {
         res.status(200).json(livrosBuscados);
       } else {
-        next(new NaoEncontrado("não encontrado!"));
+        res.status(200).send([]);
       }
     } catch (erro) {
       next(erro);
@@ -89,10 +89,10 @@ class LivroController {
   }
 }
 
-function processaBusca(prametros) {
-  const { editora, titulo, minPaginas, maxPaginas } = prametros;
+async function processaBusca(parametros) {
+  const { editora, titulo, minPaginas, maxPaginas, nomeAutor } = parametros;
 
-  const busca = {};
+  let busca = {};
   if (editora) busca.editora = { $regex: editora, $options: "i" };
   if (titulo) busca.titulo = { $regex: titulo, $options: "i" };
 
@@ -100,6 +100,16 @@ function processaBusca(prametros) {
 
   if (minPaginas) busca.paginas.$gte = minPaginas;
   if (maxPaginas) busca.paginas.$lte = maxPaginas;
+  if (nomeAutor) {
+    const autorEncontrado = await autor.findOne({
+      nome: { $regex: nomeAutor, $options: "i" },
+    });
+    if (autorEncontrado !== null) {
+      busca.autor = autorEncontrado._doc;
+    } else {
+      busca = null;
+    }
+  }
 
   return busca;
 }
