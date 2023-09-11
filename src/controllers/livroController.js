@@ -73,19 +73,35 @@ class LivroController {
       next(erro);
     }
   }
-  static async listaLivrosPorEditora(req, res, next) {
-    const editora = req.query.editora;
+  static async listaLivrosPorFiltro(req, res, next) {
     try {
-      const livrosPorEditora = await livro.find({ editora: editora });
-      if (livrosPorEditora !== null) {
-        res.status(200).json(livrosPorEditora);
+      const busca = processaBusca(req.query);
+
+      const livrosBuscados = await livro.find(busca);
+      if (livrosBuscados.length > 0) {
+        res.status(200).json(livrosBuscados);
       } else {
-        next(new NaoEncontrado("Editora não encontrada!"));
+        next(new NaoEncontrado("não encontrado!"));
       }
     } catch (erro) {
       next(erro);
     }
   }
+}
+
+function processaBusca(prametros) {
+  const { editora, titulo, minPaginas, maxPaginas } = prametros;
+
+  const busca = {};
+  if (editora) busca.editora = { $regex: editora, $options: "i" };
+  if (titulo) busca.titulo = { $regex: titulo, $options: "i" };
+
+  if (minPaginas || maxPaginas) busca.paginas = {};
+
+  if (minPaginas) busca.paginas.$gte = minPaginas;
+  if (maxPaginas) busca.paginas.$lte = maxPaginas;
+
+  return busca;
 }
 
 export default LivroController;
